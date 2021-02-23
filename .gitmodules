@@ -1,0 +1,3 @@
+[submodule "html2canvas"]
+	path = html2canvas
+	url = https://github.com/niklasvh/html2canvas.git
