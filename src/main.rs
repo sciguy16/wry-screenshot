@@ -7,14 +7,14 @@ fn main() -> Result<()> {
     } else {
         println!(
             "Usage: {} <url>",
-            env::args().nth(0).unwrap_or("cargo run --".to_string())
+            env::args().next().unwrap_or_else(|| "cargo run --".to_string())
         );
         return Ok(());
     };
 
     let mut app = Application::new()?;
     let attributes = Attributes {
-        url: Some(url.to_string()),
+        url: Some(url),
         ..Default::default()
     };
     app.add_window(attributes, None)?;
