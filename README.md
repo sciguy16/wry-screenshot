@@ -10,6 +10,10 @@ cargo run -- http://example.com
 # Captured image is 'image.png'
 ```
 
+## Bugs
+* Doesn't work for all websites - e.g. some result in `Unhandled Promise Rejection: SecurityError: The operation is insecure.` errors
+* Invisible windows seem to ignore the `width` and `height` attributes, resulting in minimum-width images
+
 ## Setup
 This repo ships with a compiled version of html2canvas.
 To rebuild it, ensure that you have checked out the html2canvas submodule and build it with npm:
