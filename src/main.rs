@@ -1,7 +1,6 @@
 use std::env;
 use std::fs::File;
 use std::io::Write;
-use std::thread;
 use url::Url;
 use wry::{Application, Attributes, Callback, Result, WindowProxy};
 
@@ -10,13 +9,12 @@ const TAKE_SCREENSHOT: &str = r#"
 window.onload = function() {
   console.log("Starting window.onload");
   html2canvas(document.body, {
-  	    useCORS: false
-  	})
-    .then(function(canvas) {
+      useCORS: false
+    }).then(function(canvas) {
       console.log("Received canvas");
       var data_url = canvas.toDataURL();
       callback(data_url);
-});
+  });
 }
 "#;
 
@@ -38,9 +36,15 @@ fn main() -> Result<()> {
         url: Some(url),
         debug: true,
         visible: false,
+        width: 1280.0,
+        height: 720.0,
+        initialization_scripts: [HTML2CANVAS, TAKE_SCREENSHOT]
+            .iter()
+            .map(|s| s.to_string())
+            .collect(),
         ..Default::default()
     };
-    let window_proxy: WindowProxy = app.add_window(
+    let _window_proxy: WindowProxy = app.add_window(
         attributes,
         Some(vec![Callback {
             name: "callback".to_string(),
@@ -48,11 +52,7 @@ fn main() -> Result<()> {
         }]),
     )?;
 
-    let handle = thread::spawn(move || do_the_thing(window_proxy));
-
     app.run();
-
-    handle.join().unwrap()?;
 
     Ok(())
 }
@@ -82,12 +82,4 @@ fn callback(_window_proxy: WindowProxy, _seq: i32, args: Vec<String>) -> i32 {
     }
 
     FAILURE
-}
-
-fn do_the_thing(window_proxy: WindowProxy) -> Result<()> {
-    println!("Doing the thing");
-    window_proxy.evaluate_script(HTML2CANVAS)?;
-    window_proxy.evaluate_script(TAKE_SCREENSHOT)?;
-
-    Ok(())
 }
